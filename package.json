@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
    "start": "node src/index.js",
-   "dev":"nodemon src/index.js"
+   "dev":"nodemon src/index.js",
+   "db":"/Users/Lenovo/mongodb/bin/mongod.exe --dbpath=/Users/Lenovo/mongodb-data"
   },
   "author": "",
   "license": "ISC",
