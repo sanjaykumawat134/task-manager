@@ -1,6 +1,8 @@
-const mongoos = require("mongoose");
+const mongoose = require("mongoose");
 const validator = require("validator");
-const User = mongoos.model("User", {
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const userSchema = new mongoose.Schema({
   name: {
     type: String,
     trim: true,
@@ -8,6 +10,7 @@ const User = mongoos.model("User", {
   },
   email: {
     type: String,
+    unique: true,
     required: true,
     trim: true,
     lowercase: true,
@@ -37,6 +40,45 @@ const User = mongoos.model("User", {
       }
     },
   },
+  tokens: [
+    {
+      token: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
 });
+userSchema.methods.generateAuthToken = async function () {
+  const user = this;
+  const token = jwt.sign({ _id: user._id.toString() }, "taskmangerapp");
+  user.tokens = user.tokens.concat({ token });
+  await user.save();
+  return token;
+};
+
+userSchema.statics.findByCredientials = async function (email, password) {
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new Error("unable to login");
+  }
+  const isMatch = await bcrypt.compare(password, user.password);
+
+  if (!isMatch) {
+    throw new Error("unable to login");
+  }
+
+  return user;
+};
+//Hash the plain text password
+userSchema.pre("save", async function (next) {
+  const user = this;
+  console.log("middleware run");
+  if (user.isModified("password")) {
+    user.password = await bcrypt.hash(user.password, 8);
+  }
+  next();
+}); // middleware pre and post hook
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;

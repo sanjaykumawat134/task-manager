@@ -4,14 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-   "start": "node src/index.js",
-   "dev":"nodemon src/index.js",
-   "db":"/Users/Lenovo/mongodb/bin/mongod.exe --dbpath=/Users/Lenovo/mongodb-data"
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "db": "/Users/Lenovo/mongodb/bin/mongod.exe --dbpath=/Users/Lenovo/mongodb-data"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.6.10",
     "mongoose": "^5.13.2",
     "validator": "^13.6.0"
