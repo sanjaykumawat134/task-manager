@@ -1,7 +1,7 @@
 const express = require("express");
 const userRoutes = new express.Router();
 const User = require("../models/User");
-
+const auth = require("../middleware/auth");
 userRoutes.post("/users", async (req, res) => {
   try {
     const user = await new User(req.body).save();
@@ -14,20 +14,8 @@ userRoutes.post("/users", async (req, res) => {
 });
 
 //get the users
-userRoutes.get("/users", async (req, res) => {
-  // User.find({})
-  //   .then((users) => {
-  //     res.send(users);
-  //   })
-  //   .catch((error) => {
-  //     res.status(500).send(error);
-  //   });
-  try {
-    const users = await User.find({});
-    res.send(users);
-  } catch (error) {
-    res.status(500).send(error);
-  }
+userRoutes.get("/users/me", auth, async (req, res) => {
+  res.send(req.user.getPublicProfile());
 });
 
 //get user by id
@@ -113,9 +101,30 @@ userRoutes.post("/users/login", async (req, res) => {
       req.body.password
     );
     const token = await user.generateAuthToken();
-    res.send({ user, token });
+    res.send({ user: user.getPublicProfile(),token:token});
   } catch (error) {
     res.send(400);
   }
 });
+userRoutes.post('/users/logout',auth,async(req,res)=>{
+  try{
+ const index = req.user.tokens.indexOf(req.token);
+ req.user.tokens.splice(index,1);
+ await req.user.save();
+ res.json("logout successfully").send();
+  }
+  catch(error){
+    res.status(500).send(error)
+  }
+})
+userRoutes.post('/users/logoutAll',auth,async(req,res)=>{
+  try{
+      req.user.tokens =[];
+      await req.user.save();
+      res.json('logout successfully').status(200).send();
+  }catch(error){
+    res.status(500).send(error)
+  }
+})
+
 module.exports = userRoutes;
