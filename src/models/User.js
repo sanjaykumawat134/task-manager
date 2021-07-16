@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
   },
   age: {
     type: Number,
-    default: 0,
+    default: 21,
     validate(value) {
       if (value < 0) {
         throw new Error("age should be a positve number");
@@ -49,6 +49,11 @@ const userSchema = new mongoose.Schema({
     },
   ],
 });
+userSchema.virtual('tasks',{
+  ref:'Task',
+  localField:'_id',
+  foreignField:'owner'
+})
 userSchema.methods.generateAuthToken = async function () {
   const user = this;
   const token = jwt.sign({ _id: user._id.toString() }, "taskmangerapp");
@@ -56,7 +61,7 @@ userSchema.methods.generateAuthToken = async function () {
   await user.save();
   return token;
 };
-userSchema.methods.getPublicProfile=  function (){
+userSchema.methods.toJSON=  function (){
   const user = this;
   const userObject = user.toObject();
   delete userObject.password;

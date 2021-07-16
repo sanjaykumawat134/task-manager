@@ -13,3 +13,13 @@ app.use(taskRoutes); //task router
 app.listen(port, () => {
   console.log("Sever started on port" + port);
 });
+
+// const Task = require("./models/Task");
+// const User = require("./models/User");
+// const main = async ()=>{
+//   const user = await User.findById('60f157c69a03f438f44922e9');
+//  await user.populate('tasks').execPopulate();
+//   console.log(user.tasks)
+// }
+
+// main();
