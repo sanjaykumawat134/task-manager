@@ -14,10 +14,32 @@ taskRoutes.post("/tasks", auth, async (req, res) => {
 
 //get all tasks
 taskRoutes.get("/tasks", auth, async (req, res) => {
+  const match = {};
+  const sort = {};
+  const str = req.query.sortBy;
+  if(str){
+    // const index = str.indexOf('_');
+    // const subStr = str.substring(index+1,str.length);
+     const parts = str.split('_');
+    sort[parts[0]] =parts[1].toLowerCase()==='asc'? 1 : -1;
+  }
+   
+  if(req.query.completed){
+      match.completed = req.query.completed ==='true'?true : false; 
+  }
   try {
     //serve all task to specific user
     const user = req.user;
-    await user.populate("tasks").execPopulate();
+    await user.populate({
+     path:"tasks",
+     match,
+     options:{
+       limit:parseInt(req.query.limit),
+       skip:parseInt(req.query.skips),
+      sort
+     }
+    }
+    ).execPopulate();
     console.log("task is", user.tasks);
     res.send(user.tasks);
   } catch (error) {

@@ -16,7 +16,9 @@ const taskSchema = new mongoose.Schema({   //innerclass of mongoose
     required:true,
     ref:'User'
   }
-})  
+},{
+  timestamps:true
+})
 taskSchema.pre('save',async function (next){
   const task =this;
   console.log('middleware running');
