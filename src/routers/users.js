@@ -2,6 +2,7 @@ const express = require("express");
 const userRoutes = new express.Router();
 const User = require("../models/User");
 const auth = require("../middleware/auth");
+const multer = require("multer");
 userRoutes.post("/users", async (req, res) => {
   try {
     const user = await new User(req.body).save();
@@ -17,7 +18,7 @@ userRoutes.post("/users", async (req, res) => {
 userRoutes.get("/users/me", auth, async (req, res) => {
   res.send(req.user);
 });
-
+//update user
 userRoutes.patch("/user/me", auth,async (req, res) => {
   const allowedUpdates = ["name", "email", "password", "age"];
   const updates = Object.keys(req.body);
@@ -91,5 +92,47 @@ userRoutes.post('/users/logoutAll',auth,async(req,res)=>{
     res.status(500).send(error)
   }
 })
-
+const storage = multer.diskStorage({
+  destination:function(req,file,cb){
+    cb(null,'avatars');
+  },
+  filename:function(req,file,cb){
+      cb(null,file.originalname)
+  }
+})
+const upload = multer({
+  fileFilter:function(req,file,cb){
+    if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
+      return cb(new Error("please upload valid avatar file"))
+    }
+    cb(null,true)
+  },
+ limits:{
+   fileSize:10000000,
+ },
+//  storage:storage
+})
+userRoutes.post('/user/me/avatar',auth,upload.single('avatar'), async (req,res)=>{
+  req.user.avatar = req.file.buffer;
+   await req.user.save();
+res.send();},(error,req,res,next)=>{
+  res.status(400).send({error:error.message})
+});
+userRoutes.delete('/user/me/avatar',auth,async (req,res)=>{
+  req.user.avatar = undefined;
+  await req.user.save();
+});
+//get avatar
+userRoutes.get('/user/:id/avatar', async (req,res)=>{
+  try{
+      const user = await User.findById(req.params.id);
+      if(!user || !user.avatar){
+        throw new Error()
+      }
+      res.set('Content-Type','image/jpg')
+      res.send(user.avatar);
+  }catch(error){
+    res.status(404).send();
+  }
+})
 module.exports = userRoutes;

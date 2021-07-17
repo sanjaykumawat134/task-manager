@@ -49,8 +49,11 @@ const userSchema = new mongoose.Schema({
       },
     },
   ],
+  avatar:{
+    type:Buffer
+  }
 },{
-  timestamps:true,
+  timestamps:true
 });
 userSchema.virtual('tasks',{
   ref:'Task',

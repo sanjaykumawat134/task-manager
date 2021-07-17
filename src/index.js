@@ -23,3 +23,26 @@ app.listen(port, () => {
 // }
 
 // main();
+const multer = require("multer");
+const upload = multer(
+  {
+    dest:'./images',
+    fileFilter:function(req,file,cb){
+      if(file.originalname.match(/\.(doc|docx)$/)){
+        cb(null,true);
+      }else{
+        cb('upload only word files',false)
+      }
+    },
+    limits:{
+      fileSize:1000000
+    }
+  },
+
+);
+
+app.post('/upload',upload.single('upload'),(req,res)=>{
+   res.send();
+},(error,req,res,next)=>{
+  res.status(400).send(error)
+})
