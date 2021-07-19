@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "env-cmd -f./config/dev.env nodemon src/index.js",
-    "db": "/Users/HP/mongodb/bin/mongod.exe --dbpath=/Users/HP/mongodb-data"
+    "db": "/Users/HP/mongodb/bin/mongod.exe --dbpath=/Users/HP/mongodb-data",
+    "test": "jest --watch"
   },
   "author": "",
   "license": "ISC",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "env-cmd": "^10.1.0",
+    "jest": "^27.0.6",
     "nodemon": "^2.0.12"
   }
 }
