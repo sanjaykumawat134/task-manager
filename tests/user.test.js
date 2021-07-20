@@ -5,7 +5,7 @@ const { setUpDatabase, userOne, userOneId } = require("./fixtures/db");
 
 beforeEach(setUpDatabase);
 test("Should signup a new user", async () => {
-  jest.setTimeout(10000);
+  //   jest.setTimeout(10000);
   const response = await request(app)
     .post("/users/")
     .send({
@@ -26,7 +26,7 @@ test("Should signup a new user", async () => {
 });
 
 test("Should login existing user", async () => {
-  jest.setTimeout(10000);
+  //   jest.setTimeout(10000);
   const response = await request(app)
     .post("/users/login")
     .send({
