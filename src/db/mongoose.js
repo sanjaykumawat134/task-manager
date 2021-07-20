@@ -1,7 +1,8 @@
 const mongoos = require("mongoose");
-mongoos.connect(process.env.MONGODB_URL, {
+mongoos.connect(process.env.MONGODB_URL2, {
   useNewUrlParser: true,
   useCreateIndex: true,
+  useUnifiedTopology: true,
 });
 
 // const me = new User({

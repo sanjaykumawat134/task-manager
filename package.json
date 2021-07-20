@@ -7,7 +7,10 @@
     "start": "node src/index.js",
     "dev": "env-cmd -f./config/dev.env nodemon src/index.js",
     "db": "/Users/HP/mongodb/bin/mongod.exe --dbpath=/Users/HP/mongodb-data",
-    "test": "jest --watch"
+    "test": "env-cmd -f./config/test.env jest --watch --runInBand"
+  },
+  "jest":{
+   "testEnvironment":"node"
   },
   "author": "",
   "license": "ISC",
