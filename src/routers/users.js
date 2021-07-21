@@ -4,10 +4,15 @@ const User = require("../models/User");
 const auth = require("../middleware/auth");
 const multer = require("multer");
 const sharp = require("sharp");
+const {
+  sendEmailOnCreation,
+  sendEmailOnDeletion,
+} = require("../emails/accounts");
 userRoutes.post("/users", async (req, res) => {
   try {
     const user = await new User(req.body).save();
     const token = await user.generateAuthToken();
+    await sendEmailOnCreation(user);
     res.status(201).send({ user, token });
   } catch (error) {
     res.status(400).send(error);
@@ -54,7 +59,9 @@ userRoutes.patch("/user/me", auth, async (req, res) => {
 //delete a task by its id
 userRoutes.delete("/user/me", auth, async (req, res) => {
   try {
-    return res.send(await req.user.remove());
+    const user = await req.user.remove();
+    await sendEmailOnDeletion(user);
+    return res.send(user);
   } catch (error) {
     res.status(500).send(error);
   }
